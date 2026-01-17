@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web3 Dev Toolbox</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .category-tag {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="text-slate-200 p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <header class="mb-12 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+                <h1 class="text-4xl font-bold tracking-tight text-white mb-2">Web3 Dev Toolbox</h1>
+                <p class="text-slate-400 max-w-2xl">A curated collection of essential tools for blockchain developers, testing, and multi-chain asset management.</p>
+            </div>
+            <div id="stats" class="text-sm font-mono text-blue-400 bg-blue-500/10 px-4 py-2 rounded-lg border border-blue-500/20">
+                // Loading tools...
+            </div>
+        </header>
+
+        <!-- Filters -->
+        <div class="flex flex-wrap gap-2 mb-8" id="filter-container">
+            <button onclick="filterTools('All')" class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white/10 hover:bg-white/20 transition-colors border border-white/5 active">All</button>
+        </div>
+
+        <!-- Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="tools-grid">
+            <!-- Cards will be injected here -->
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-20 py-8 border-t border-white/5 text-center text-slate-500 text-sm">
+            <p>&copy; 2024 Web3 Navigator • Built for efficient blockchain interaction</p>
+        </footer>
+    </div>
+
+    <script>
+        const toolsData = [
+            {
+                "id": "case-generator",
+                "name": "CaseGenerator",
+                "url": "https://onetokenpairs.netlify.app/",
+                "description": "Streamline bridge testing by generating standardized test cases effortlessly.",
+                "category": "Testing",
+                "icon": "beaker"
+            },
+            {
+                "id": "evm-nexus",
+                "name": "EVM Nexus",
+                "url": "https://evm-nexus.vercel.app/",
+                "description": "Powerful ABI parsing, decoding, and direct on-chain data exploration.",
+                "category": "Development",
+                "icon": "code-2"
+            },
+            {
+                "id": "asset-tracker",
+                "name": "Asset Tracker",
+                "url": "https://asset-center-golden.vercel.app/api/asset-tracker?address={address}",
+                "description": "Unified API for real-time multi-chain asset tracking and portfolio analysis.",
+                "category": "Data",
+                "icon": "search"
+            },
+            {
+                "id": "chain-request",
+                "name": "Chain Request",
+                "url": "https://chain-request.vercel.app/{chainType}",
+                "description": "High-performance RPC proxy and aggregator supporting multiple networks.",
+                "category": "Infrastructure",
+                "icon": "layers"
+            },
+            {
+                "id": "multichain-sender",
+                "name": "Multichain Sender",
+                "url": "https://multichain-sender.vercel.app/",
+                "description": "Efficient batch distribution and asset sending across various blockchains.",
+                "category": "Asset Management",
+                "icon": "send"
+            }
+        ];
+
+        function renderTools(filter = 'All') {
+            const grid = document.getElementById('tools-grid');
+            const stats = document.getElementById('stats');
+            grid.innerHTML = '';
+
+            const filtered = filter === 'All' ? toolsData : toolsData.filter(t => t.category === filter);
+            
+            stats.innerText = `Total: ${filtered.length} tools`;
+
+            filtered.forEach(tool => {
+                const card = document.createElement('div');
+                card.className = 'glass-card rounded-2xl p-6 flex flex-col justify-between';
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="p-3 bg-blue-500/10 rounded-xl text-blue-400">
+                                <i data-lucide="${tool.icon || 'external-link'}"></i>
+                            </div>
+                            <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded bg-white/5 text-slate-400 border border-white/5">
+                                ${tool.category}
+                            </span>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-2">${tool.name}</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-6">${tool.description}</p>
+                    </div>
+                    <a href="${tool.url}" target="_blank" class="flex items-center justify-center gap-2 w-full py-3 bg-white/5 hover:bg-white/10 rounded-xl text-sm font-medium transition-all group">
+                        Launch Tool
+                        <i data-lucide="arrow-up-right" class="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
+                    </a>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function setupFilters() {
+            const categories = ['All', ...new Set(toolsData.map(t => t.category))];
+            const container = document.getElementById('filter-container');
+            container.innerHTML = '';
+            
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.innerText = cat;
+                btn.onclick = () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('bg-blue-600', 'text-white'));
+                    btn.classList.add('bg-blue-600', 'text-white');
+                    renderTools(cat);
+                };
+                btn.className = 'filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white/5 hover:bg-white/10 transition-colors border border-white/5';
+                if(cat === 'All') btn.classList.add('bg-blue-600', 'text-white');
+                container.appendChild(btn);
+            });
+        }
+
+        window.onload = () => {
+            setupFilters();
+            renderTools();
+        };
+    </script>
+</body>
+</html>
