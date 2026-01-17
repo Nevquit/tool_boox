@@ -36,6 +36,10 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
+        /* 隐藏滚动条但保留功能 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="text-slate-200 p-4 md:p-8">
@@ -54,7 +58,7 @@
 
         <!-- Filters -->
         <div class="flex flex-wrap gap-2 mb-8" id="filter-container">
-            <button onclick="filterTools('All')" class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white/10 hover:bg-white/20 transition-colors border border-white/5 active">All</button>
+            <button class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white/10 hover:bg-white/20 transition-colors border border-white/5 active">All</button>
         </div>
 
         <!-- Grid -->
@@ -70,6 +74,15 @@
 
     <script>
         const toolsData = [
+            {
+                "id": "ione-web",
+                "name": "iONE Web",
+                "url": "https://ione-web.vercel.app/",
+                "description": "Powerful web-based tool for Wanchain ecosystem. Support for 'getStoremanPartnerInfo' and comprehensive chain interactions.",
+                "category": "Development",
+                "icon": "zap",
+                "isNew": true
+            },
             {
                 "id": "wanbank",
                 "name": "WanBank",
@@ -113,7 +126,7 @@
             {
                 "id": "multichain-sender",
                 "name": "Multichain Sender",
-                "url": "https://multichain-sender.vercel.app/",
+                "url": "https://multichain-sender.netlify.app/",
                 "description": "Efficient batch distribution and asset sending across various blockchains.",
                 "category": "Asset Management",
                 "icon": "send"
@@ -135,14 +148,18 @@
                 card.innerHTML = `
                     <div>
                         <div class="flex justify-between items-start mb-4">
-                            <div class="p-3 bg-blue-500/10 rounded-xl text-blue-400">
+                            <div class="p-3 bg-blue-500/10 rounded-xl text-blue-400 relative">
                                 <i data-lucide="${tool.icon || 'external-link'}"></i>
+                                ${tool.isNew ? '<span class="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full animate-ping"></span>' : ''}
                             </div>
                             <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded bg-white/5 text-slate-400 border border-white/5">
                                 ${tool.category}
                             </span>
                         </div>
-                        <h3 class="text-xl font-semibold text-white mb-2">${tool.name}</h3>
+                        <h3 class="text-xl font-semibold text-white mb-2 flex items-center gap-2">
+                            ${tool.name}
+                            ${tool.isNew ? '<span class="text-[9px] bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/30 font-bold uppercase">New</span>' : ''}
+                        </h3>
                         <p class="text-slate-400 text-sm leading-relaxed mb-6">${tool.description}</p>
                     </div>
                     <a href="${tool.url}" target="_blank" class="flex items-center justify-center gap-2 w-full py-3 bg-white/5 hover:bg-white/10 rounded-xl text-sm font-medium transition-all group">
