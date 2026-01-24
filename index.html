@@ -144,7 +144,7 @@
                             <div class="bg-white p-5 rounded-2xl border shadow-sm">
                                 <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Unix 时间戳 → UTC</label>
                                 <div class="flex gap-2">
-                                    <input type="text" id="ts-input" class="flex-1 border rounded-lg p-2 code-font text-sm" placeholder="1769228636">
+                                    <input type="text" id="ts-input" class="flex-1 border rounded-lg p-2 code-font text-sm" placeholder="1769228636.964">
                                     <button onclick="processTimeInput()" class="bg-blue-600 text-white px-4 rounded-lg text-sm">转换</button>
                                 </div>
                             </div>
@@ -181,7 +181,7 @@
         </div>
     </div>
 
-    <!-- Toast Component -->
+    <!-- Toast -->
     <div id="toast" class="fixed bottom-28 right-8 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 transition-opacity duration-300 pointer-events-none z-[120] text-sm font-medium">
         已复制
     </div>
@@ -299,32 +299,56 @@
         function copyJSON() { copyText(lastPrettyJson); }
         function clearJSON() { document.getElementById('json-input').value = ""; document.getElementById('json-display').innerHTML = ""; lastPrettyJson = ""; }
 
-        // --- Time Functions ---
+        // --- Time Functions (FIXED) ---
         function processTimeInput() {
-            const raw = document.getElementById('ts-input').value.trim();
-            if(!raw) return;
-            let d = new Date(raw.length <= 10 ? raw * 1000 : raw * 1);
+            let rawStr = document.getElementById('ts-input').value.trim();
+            if(!rawStr) return;
+            
+            let val = parseFloat(rawStr);
+            if (isNaN(val)) return;
+
+            // 智能识别逻辑：
+            // 如果数值小于 32503680000 (即公元 3000 年的秒数)，判断为秒级戳
+            // 否则判断为毫秒级戳
+            let d;
+            if (val < 32503680000) {
+                d = new Date(val * 1000);
+            } else {
+                d = new Date(val);
+            }
+            
             if(!isNaN(d)) renderTimeResults(d);
         }
         function utcDateToLocal() {
-            let d = new Date(document.getElementById('date-input').value.trim() + " UTC");
+            let val = document.getElementById('date-input').value.trim();
+            // 尝试自动补全 UTC 后缀以便构造函数识别
+            let d = new Date(val.includes('Z') || val.includes('GMT') ? val : val + " UTC");
             if(!isNaN(d)) renderTimeResults(d);
         }
         function renderTimeResults(d) {
-            const row = (l, v) => `<div class="flex justify-between items-center p-3 border rounded-xl clickable-result bg-white" onclick="copyText('${v}')">
-                <div class="flex flex-col"><span class="text-[10px] text-slate-400 font-bold uppercase">${l}</span><span class="code-font text-sm">${v}</span></div>
-                <i class="fas fa-copy text-slate-300"></i></div>`;
-            document.getElementById('time-output').innerHTML = row('UTC String', d.toISOString().replace('T',' ').split('.')[0]) + row('Unix Seconds', Math.floor(d.getTime()/1000)) + row('Local Time', d.toLocaleString());
+            const row = (l, v) => `<div class="flex justify-between items-center p-3 border rounded-xl clickable-result bg-white overflow-hidden" onclick="copyText('${v}')">
+                <div class="flex flex-col min-w-0"><span class="text-[10px] text-slate-400 font-bold uppercase">${l}</span><span class="code-font text-sm truncate">${v}</span></div>
+                <i class="fas fa-copy text-slate-300 ml-2"></i></div>`;
+            
+            document.getElementById('time-output').innerHTML = 
+                row('UTC String', d.toISOString().replace('T',' ').split('.')[0]) + 
+                row('Unix Seconds', Math.floor(d.getTime()/1000)) + 
+                row('Unix Milliseconds', d.getTime()) +
+                row('Local Time', d.toLocaleString());
         }
 
         // --- Hex Functions ---
         function convertHexToInt() { 
             let v = document.getElementById('hex-input').value.trim();
-            document.getElementById('int-input').value = parseInt(v.startsWith('0x')?v:('0x'+v), 16) || ''; 
+            if(!v) { document.getElementById('int-input').value = ''; return; }
+            document.getElementById('int-input').value = BigInt(v.startsWith('0x') ? v : ('0x' + v)).toString(); 
         }
         function convertIntToHex() { 
-            let v = parseInt(document.getElementById('int-input').value);
-            document.getElementById('hex-input').value = isNaN(v) ? '' : '0x' + v.toString(16).toUpperCase(); 
+            let v = document.getElementById('int-input').value.trim();
+            if(!v) { document.getElementById('hex-input').value = ''; return; }
+            try {
+                document.getElementById('hex-input').value = '0x' + BigInt(v).toString(16).toUpperCase(); 
+            } catch(e) {}
         }
 
         window.onload = () => { setupFilters(); renderTools(); };
