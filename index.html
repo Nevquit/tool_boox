@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Toolbox</title>
-    <!-- 添加多啦A梦样式的 Favicon (SVG Data URL) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%230096da'/><circle cx='32' cy='36' r='22' fill='white'/><circle cx='32' cy='22' r='18' fill='white' stroke='%23333' stroke-width='0.5'/><circle cx='32' cy='24' r='3' fill='%23e60012'/><path d='M32 27v10M22 32h20' stroke='%23333' stroke-width='1'/><circle cx='52' cy='48' r='10' fill='white' stroke='%230096da' stroke-width='2'/><path d='M48 48h8M52 44v8' stroke='%233b82f6' stroke-width='2' stroke-linecap='round'/></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
         
         body {
             font-family: 'Inter', sans-serif;
@@ -31,15 +31,27 @@
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
         }
 
-        .category-tag {
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* 隐藏滚动条但保留功能 */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* --- Dev Tool Panel Styles --- */
+        #dev-panel-overlay {
+            display: none;
+            backdrop-filter: blur(8px);
+            z-index: 100;
+        }
+        #dev-panel-overlay.active { display: flex; }
+        
+        .code-font { font-family: 'Fira Code', monospace; }
+        .dev-tab-content { display: none; }
+        .dev-tab-content.active { display: block; }
+        
+        .json-key { color: #f43f5e; font-weight: 500; }
+        .json-string { color: #10b981; }
+        .json-number { color: #f59e0b; }
+        .search-match { background: #fde047; color: black; border-radius: 2px; }
+
+        .clickable-result:hover { background-color: #f8fafc; cursor: pointer; border-color: #3b82f6; }
     </style>
 </head>
 <body class="text-slate-200 p-4 md:p-8">
@@ -57,14 +69,10 @@
         </header>
 
         <!-- Filters -->
-        <div class="flex flex-wrap gap-2 mb-8" id="filter-container">
-            <button class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-white/10 hover:bg-white/20 transition-colors border border-white/5 active">All</button>
-        </div>
+        <div class="flex flex-wrap gap-2 mb-8" id="filter-container"></div>
 
         <!-- Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="tools-grid">
-            <!-- Cards will be injected here -->
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="tools-grid"></div>
 
         <!-- Footer -->
         <footer class="mt-20 py-8 border-t border-white/5 text-center text-slate-500 text-sm">
@@ -72,130 +80,148 @@
         </footer>
     </div>
 
+    <!-- Floating Button -->
+    <button onclick="toggleDevPanel()" class="fixed bottom-8 right-8 w-16 h-16 bg-blue-600 hover:bg-blue-500 text-white rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 z-[110] group">
+        <i data-lucide="wrench" class="group-hover:rotate-12 transition-transform"></i>
+    </button>
+
+    <!-- Dev Tool Panel Overlay -->
+    <div id="dev-panel-overlay" class="fixed inset-0 bg-slate-950/80 items-center justify-center p-4">
+        <div class="bg-slate-50 w-full max-w-5xl h-[85vh] rounded-3xl overflow-hidden flex shadow-2xl animate-in zoom-in-95 duration-200">
+            <!-- Panel Sidebar -->
+            <aside class="w-20 md:w-64 bg-slate-900 flex flex-col shrink-0">
+                <div class="p-6 text-white font-bold hidden md:flex items-center gap-2 border-b border-slate-800">
+                    <i class="fas fa-tools text-blue-400"></i> DevToolkit
+                </div>
+                <nav class="flex-1 p-3 space-y-2 overflow-y-auto">
+                    <button onclick="switchDevTab('json')" id="tab-btn-json" class="dev-tab-btn w-full flex items-center gap-3 p-3 rounded-xl text-slate-400 hover:bg-slate-800 transition-colors active text-white bg-blue-600">
+                        <i class="fas fa-code w-5"></i> <span class="hidden md:inline text-sm">JSON 修复</span>
+                    </button>
+                    <button onclick="switchDevTab('time')" id="tab-btn-time" class="dev-tab-btn w-full flex items-center gap-3 p-3 rounded-xl text-slate-400 hover:bg-slate-800 transition-colors">
+                        <i class="fas fa-clock w-5"></i> <span class="hidden md:inline text-sm">时间戳</span>
+                    </button>
+                    <button onclick="switchDevTab('hex')" id="tab-btn-hex" class="dev-tab-btn w-full flex items-center gap-3 p-3 rounded-xl text-slate-400 hover:bg-slate-800 transition-colors">
+                        <i class="fas fa-exchange-alt w-5"></i> <span class="hidden md:inline text-sm">Hex/Int</span>
+                    </button>
+                </nav>
+                <button onclick="toggleDevPanel()" class="p-6 text-slate-500 hover:text-white transition-colors border-t border-slate-800 flex items-center justify-center gap-2">
+                    <i class="fas fa-times"></i> <span class="hidden md:inline text-sm">关闭面板</span>
+                </button>
+            </aside>
+
+            <!-- Panel Content -->
+            <main class="flex-1 flex flex-col bg-slate-50 overflow-hidden text-slate-800">
+                <header class="h-14 border-b flex items-center justify-between px-6 bg-white">
+                    <h3 id="dev-panel-title" class="font-semibold">JSON 修复 & 美化</h3>
+                </header>
+                
+                <div class="flex-1 overflow-y-auto p-6 no-scrollbar">
+                    <!-- JSON Tab -->
+                    <div id="dev-tab-json" class="dev-tab-content active space-y-4">
+                        <div class="grid lg:grid-cols-2 gap-4 h-[60vh]">
+                            <div class="flex flex-col gap-2">
+                                <textarea id="json-input" class="flex-1 border rounded-2xl p-4 code-font text-xs focus:ring-2 focus:ring-blue-500 outline-none" placeholder="输入 JSON 或 Python Dict..."></textarea>
+                                <div class="flex gap-2">
+                                    <button onclick="formatJSON()" class="flex-1 bg-blue-600 text-white py-2 rounded-xl text-sm font-medium">修复并美化</button>
+                                    <button onclick="clearJSON()" class="px-4 py-2 bg-slate-200 rounded-xl text-sm">清空</button>
+                                </div>
+                            </div>
+                            <div class="bg-slate-900 rounded-2xl flex flex-col overflow-hidden">
+                                <div class="bg-slate-800 p-2 border-b border-slate-700 flex justify-between px-4">
+                                    <input type="text" id="json-search" oninput="applySearch()" placeholder="搜索..." class="bg-transparent text-white text-xs outline-none">
+                                    <button onclick="copyJSON()" class="text-slate-400 hover:text-white text-xs"><i class="fas fa-copy"></i></button>
+                                </div>
+                                <div class="flex-1 p-4 overflow-auto">
+                                    <pre id="json-display" class="code-font text-xs text-slate-300"></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Time Tab -->
+                    <div id="dev-tab-time" class="dev-tab-content space-y-6">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-white p-5 rounded-2xl border shadow-sm">
+                                <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Unix 时间戳 → UTC</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="ts-input" class="flex-1 border rounded-lg p-2 code-font text-sm" placeholder="1769228636">
+                                    <button onclick="processTimeInput()" class="bg-blue-600 text-white px-4 rounded-lg text-sm">转换</button>
+                                </div>
+                            </div>
+                            <div class="bg-white p-5 rounded-2xl border shadow-sm">
+                                <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">UTC 字符串 → 时间戳</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="date-input" class="flex-1 border rounded-lg p-2 code-font text-sm" placeholder="2026-01-24 12:30:00">
+                                    <button onclick="utcDateToLocal()" class="bg-slate-800 text-white px-4 rounded-lg text-sm">转换</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="time-output" class="space-y-2">
+                            <div class="text-center py-10 text-slate-300 italic text-sm">结果将显示在这里</div>
+                        </div>
+                    </div>
+
+                    <!-- Hex Tab -->
+                    <div id="dev-tab-hex" class="dev-tab-content space-y-6">
+                        <div class="bg-white p-6 rounded-2xl border space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Hex 十六进制</label>
+                                    <input type="text" id="hex-input" oninput="convertHexToInt()" class="w-full border rounded-lg p-3 code-font text-sm" placeholder="0x1A2B">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Int 十进制</label>
+                                    <input type="text" id="int-input" oninput="convertIntToHex()" class="w-full border rounded-lg p-3 code-font text-sm" placeholder="6699">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Toast Component -->
+    <div id="toast" class="fixed bottom-28 right-8 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 transition-opacity duration-300 pointer-events-none z-[120] text-sm font-medium">
+        已复制
+    </div>
+
     <script>
-        const toolsData = [           
-            {
-                "id": "ICON",
-                "name": "lucide.dev",
-                "url": "https://lucide.dev/",
-                "description": "ICON",
-                "category": "ThirdPartTool",
-                "icon": "folder-root"
-            },
-            {
-                "id": "Bridge_Time_Check",
-                "name": "Bridge Time Checker",
-                "url": "https://bridge-time-cost.vercel.app/",
-                "description": "Statistics Bridge Time",
-                "category": "Testing",
-                "icon": "align-horizontal-distribute-center"
-            },
-            {
-                "id": "gas_zip",
-                "name": "GAS Center",
-                "url": "https://www.gas.zip/",
-                "description": "Third product to get gas ",
-                "category": "ThirdPartTool",
-                "icon": "car-taxi-front"
-            },
-            {
-                "id": "circlecctp",
-                "name": "CCTP Center",
-                "url": "https://circlecctp.vercel.app/",
-                "description": "for CCTP test",
-                "category": "Development",
-                "icon": "shield-check"
-            },
-            {
-                "id": "ione-web",
-                "name": "iONE Web",
-                "url": "https://ione-web.vercel.app/",
-                "description": "for iWAN Web",
-                "category": "Development",
-                "icon": "zap"
-            },
-            {
-                "id": "wanbank",
-                "name": "WanBank",
-                "url": "https://wanbank.vercel.app/",
-                "description": "Comprehensive asset dashboard for Wanchain ecosystem and cross-chain holdings.",
-                "category": "Data",
-                "icon": "layout-dashboard"
-            },
-            {
-                "id": "case-generator",
-                "name": "CaseGenerator",
-                "url": "https://onetokenpairs.netlify.app/",
-                "description": "Streamline bridge testing by generating standardized test cases effortlessly.",
-                "category": "Testing",
-                "icon": "beaker"
-            },
-            {
-                "id": "evm-nexus",
-                "name": "EVM Nexus",
-                "url": "https://evm-nexus.vercel.app/",
-                "description": "Powerful ABI parsing, decoding, and direct on-chain data exploration.",
-                "category": "Development",
-                "icon": "code-2"
-            },
-            {
-                "id": "asset-tracker",
-                "name": "Asset Tracker",
-                "url": "https://asset-center-golden.vercel.app/api/asset-tracker?address={address}",
-                "description": "Unified API for real-time multi-chain asset tracking and portfolio analysis.",
-                "category": "Data",
-                "icon": "search"
-            },
-            {
-                "id": "chain-request",
-                "name": "Chain Request",
-                "url": "https://chain-request.vercel.app/{chainType}",
-                "description": "High-performance RPC proxy and aggregator supporting multiple networks.",
-                "category": "Infrastructure",
-                "icon": "layers"
-            },
-            {
-                "id": "multichain-sender",
-                "name": "Multichain Sender",
-                "url": "https://multichain-sender.vercel.app/",
-                "description": "Efficient batch distribution and asset sending across various blockchains.",
-                "category": "Asset Management",
-                "icon": "send"
-            }
+        const toolsData = [
+            { "id": "ICON", "name": "lucide.dev", "url": "https://lucide.dev/", "description": "Search for open source icons", "category": "ThirdPartTool", "icon": "folder-root" },
+            { "id": "Bridge_Time_Check", "name": "Bridge Time Checker", "url": "https://bridge-time-cost.vercel.app/", "description": "Check the statistical cost of cross-chain bridges", "category": "Testing", "icon": "align-horizontal-distribute-center" },
+            { "id": "gas_zip", "name": "GAS Center", "url": "https://www.gas.zip/", "description": "Instant gas refueling for multiple chains", "category": "ThirdPartTool", "icon": "car-taxi-front" },
+            { "id": "circlecctp", "name": "CCTP Center", "url": "https://circlecctp.vercel.app/", "description": "Tools for testing Circle's CCTP", "category": "Development", "icon": "shield-check" },
+            { "id": "ione-web", "name": "iONE Web", "url": "https://ione-web.vercel.app/", "description": "Access Wanchain iWAN services", "category": "Development", "icon": "zap" },
+            { "id": "wanbank", "name": "WanBank", "url": "https://wanbank.vercel.app/", "description": "Wanchain ecosystem asset dashboard", "category": "Data", "icon": "layout-dashboard" },
+            { "id": "case-generator", "name": "CaseGenerator", "url": "https://onetokenpairs.netlify.app/", "description": "Generate bridge test cases automatically", "category": "Testing", "icon": "beaker" },
+            { "id": "evm-nexus", "name": "EVM Nexus", "url": "https://evm-nexus.vercel.app/", "description": "Decode ABIs and explore on-chain data", "category": "Development", "icon": "code-2" },
+            { "id": "asset-tracker", "name": "Asset Tracker", "url": "https://asset-center-golden.vercel.app/", "description": "Real-time multi-chain asset analysis", "category": "Data", "icon": "search" },
+            { "id": "chain-request", "name": "Chain Request", "url": "https://chain-request.vercel.app/", "description": "RPC proxy aggregator", "category": "Infrastructure", "icon": "layers" },
+            { "id": "multichain-sender", "name": "Multichain Sender", "url": "https://multichain-sender.vercel.app/", "description": "Batch asset distribution tool", "category": "Asset Management", "icon": "send" }
         ];
 
+        // --- Navigation Page Logic ---
         function renderTools(filter = 'All') {
             const grid = document.getElementById('tools-grid');
             const stats = document.getElementById('stats');
             grid.innerHTML = '';
-
             const filtered = filter === 'All' ? toolsData : toolsData.filter(t => t.category === filter);
-            
             stats.innerText = `Total: ${filtered.length} tools`;
-
             filtered.forEach(tool => {
                 const card = document.createElement('div');
                 card.className = 'glass-card rounded-2xl p-6 flex flex-col justify-between';
                 card.innerHTML = `
                     <div>
                         <div class="flex justify-between items-start mb-4">
-                            <div class="p-3 bg-blue-500/10 rounded-xl text-blue-400 relative">
-                                <i data-lucide="${tool.icon || 'external-link'}"></i>
-                                ${tool.isNew ? '<span class="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full animate-ping"></span>' : ''}
-                            </div>
-                            <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded bg-white/5 text-slate-400 border border-white/5">
-                                ${tool.category}
-                            </span>
+                            <div class="p-3 bg-blue-500/10 rounded-xl text-blue-400"><i data-lucide="${tool.icon || 'external-link'}"></i></div>
+                            <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded bg-white/5 text-slate-400 border border-white/5">${tool.category}</span>
                         </div>
-                        <h3 class="text-xl font-semibold text-white mb-2 flex items-center gap-2">
-                            ${tool.name}
-                            ${tool.isNew ? '<span class="text-[9px] bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/30 font-bold uppercase">New</span>' : ''}
-                        </h3>
+                        <h3 class="text-xl font-semibold text-white mb-2">${tool.name}</h3>
                         <p class="text-slate-400 text-sm leading-relaxed mb-6">${tool.description}</p>
                     </div>
                     <a href="${tool.url}" target="_blank" class="flex items-center justify-center gap-2 w-full py-3 bg-white/5 hover:bg-white/10 rounded-xl text-sm font-medium transition-all group">
-                        Launch Tool
-                        <i data-lucide="arrow-up-right" class="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
+                        Launch Tool <i data-lucide="arrow-up-right" class="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
                     </a>
                 `;
                 grid.appendChild(card);
@@ -207,7 +233,6 @@
             const categories = ['All', ...new Set(toolsData.map(t => t.category))];
             const container = document.getElementById('filter-container');
             container.innerHTML = '';
-            
             categories.forEach(cat => {
                 const btn = document.createElement('button');
                 btn.innerText = cat;
@@ -222,10 +247,87 @@
             });
         }
 
-        window.onload = () => {
-            setupFilters();
-            renderTools();
-        };
+        // --- Dev Panel Logic ---
+        function toggleDevPanel() {
+            document.getElementById('dev-panel-overlay').classList.toggle('active');
+        }
+
+        function switchDevTab(tabId) {
+            document.querySelectorAll('.dev-tab-btn').forEach(b => b.classList.remove('text-white', 'bg-blue-600'));
+            document.querySelectorAll('.dev-tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-btn-' + tabId).classList.add('text-white', 'bg-blue-600');
+            document.getElementById('dev-tab-' + tabId).classList.add('active');
+            const titles = { 'json': 'JSON 修复 & 美化', 'time': '时间戳转换', 'hex': 'Hex / Int 转换' };
+            document.getElementById('dev-panel-title').innerText = titles[tabId];
+        }
+
+        // --- Tool Implementation ---
+        let lastPrettyJson = "";
+        function syntaxHighlight(json) {
+            if (typeof json != 'string') json = JSON.stringify(json, undefined, 4);
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, (match) => {
+                let cls = 'json-number';
+                if (/^"/.test(match)) { if (/:$/.test(match)) cls = 'json-key'; else cls = 'json-string'; }
+                else if (/true|false/.test(match)) cls = 'json-boolean';
+                else if (/null/.test(match)) cls = 'json-null';
+                return `<span class="${cls}">${match}</span>`;
+            });
+        }
+        function formatJSON() {
+            let input = document.getElementById('json-input').value.trim();
+            try {
+                input = input.replace(/True/g, 'true').replace(/False/g, 'false').replace(/None/g, 'null');
+                let obj = (new Function(`return ${input}`))();
+                lastPrettyJson = JSON.stringify(obj, null, 4);
+                document.getElementById('json-display').innerHTML = syntaxHighlight(lastPrettyJson);
+            } catch(e) { document.getElementById('json-display').innerText = "错误: " + e.message; }
+        }
+        function applySearch() {
+            const query = document.getElementById('json-search').value.trim();
+            if(!lastPrettyJson) return;
+            const html = syntaxHighlight(lastPrettyJson);
+            if(!query) { document.getElementById('json-display').innerHTML = html; return; }
+            const regex = new RegExp(`(${query})`, 'gi');
+            document.getElementById('json-display').innerHTML = html.split(/(<[^>]*>)/).map(p => p.startsWith('<') ? p : p.replace(regex, '<mark class="search-match">$1</mark>')).join('');
+        }
+        function copyText(txt) {
+            const el = document.createElement('textarea'); el.value = txt; document.body.appendChild(el); el.select();
+            document.execCommand('copy'); document.body.removeChild(el);
+            const t = document.getElementById('toast'); t.style.opacity = '1'; setTimeout(() => t.style.opacity = '0', 1500);
+        }
+        function copyJSON() { copyText(lastPrettyJson); }
+        function clearJSON() { document.getElementById('json-input').value = ""; document.getElementById('json-display').innerHTML = ""; lastPrettyJson = ""; }
+
+        // --- Time Functions ---
+        function processTimeInput() {
+            const raw = document.getElementById('ts-input').value.trim();
+            if(!raw) return;
+            let d = new Date(raw.length <= 10 ? raw * 1000 : raw * 1);
+            if(!isNaN(d)) renderTimeResults(d);
+        }
+        function utcDateToLocal() {
+            let d = new Date(document.getElementById('date-input').value.trim() + " UTC");
+            if(!isNaN(d)) renderTimeResults(d);
+        }
+        function renderTimeResults(d) {
+            const row = (l, v) => `<div class="flex justify-between items-center p-3 border rounded-xl clickable-result bg-white" onclick="copyText('${v}')">
+                <div class="flex flex-col"><span class="text-[10px] text-slate-400 font-bold uppercase">${l}</span><span class="code-font text-sm">${v}</span></div>
+                <i class="fas fa-copy text-slate-300"></i></div>`;
+            document.getElementById('time-output').innerHTML = row('UTC String', d.toISOString().replace('T',' ').split('.')[0]) + row('Unix Seconds', Math.floor(d.getTime()/1000)) + row('Local Time', d.toLocaleString());
+        }
+
+        // --- Hex Functions ---
+        function convertHexToInt() { 
+            let v = document.getElementById('hex-input').value.trim();
+            document.getElementById('int-input').value = parseInt(v.startsWith('0x')?v:('0x'+v), 16) || ''; 
+        }
+        function convertIntToHex() { 
+            let v = parseInt(document.getElementById('int-input').value);
+            document.getElementById('hex-input').value = isNaN(v) ? '' : '0x' + v.toString(16).toUpperCase(); 
+        }
+
+        window.onload = () => { setupFilters(); renderTools(); };
     </script>
 </body>
 </html>
