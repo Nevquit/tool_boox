@@ -188,40 +188,45 @@
 
     <script>
         const toolsData = [
-            { "id": "ICON", "name": "lucide.dev", "url": "https://lucide.dev/", "description": "Search for open source icons", "category": "Development", "icon": "folder-root" },
-            { "id": "Bridge_Time_Check", "name": "Bridge Time Checker", "url": "https://bridge-time-cost.vercel.app/", "description": "Check the statistical cost of cross-chain bridges", "category": "Testing", "icon": "align-horizontal-distribute-center" },
-            { "id": "gas_zip", "name": "GAS Center", "url": "https://www.gas.zip/", "description": "Instant gas refueling for multiple chains", "category": "Development", "icon": "car-taxi-front" },
-            { "id": "circlecctp", "name": "CCTP Center", "url": "https://circlecctp.vercel.app/", "description": "Tools for testing Circle's CCTP", "category": "Debug", "icon": "shield-check" },
-            { "id": "ione-web", "name": "iONE Web", "url": "https://ione-web.vercel.app/", "description": "Access Wanchain iWAN services", "category": "Development", "icon": "zap" },
-            { "id": "wanbank", "name": "WanBank", "url": "https://wanbank.vercel.app/", "description": "Wanchain ecosystem asset dashboard", "category": "Asset Management", "icon": "layout-dashboard" },
-            { "id": "case-generator", "name": "CaseGenerator", "url": "https://bridge-case-generator.vercel.app/", "description": "Generate bridge test cases automatically", "category": "Testing", "icon": "beaker" },
-            { "id": "evm-nexus", "name": "EVM Nexus", "url": "https://evm-nexus.vercel.app/", "description": "Decode ABIs and explore on-chain data", "category": "Development", "icon": "code-2" },
-            { "id": "asset-tracker", "name": "Asset Tracker", "url": "https://asset-center-golden.vercel.app/", "description": "Real-time multi-chain asset analysis", "category": "Asset Management", "icon": "search" },
-            { "id": "chain-request", "name": "Chain Request", "url": "https://chain-request.vercel.app/", "description": "RPC proxy aggregator", "category": "Infrastructure", "icon": "layers" },
-            { "id": "multichain-sender", "name": "Multichain Sender", "url": "https://multichain-sender.vercel.app/", "description": "Batch asset distribution tool", "category": "Asset Management", "icon": "send" },
-            { "id": "stress-tx-config-update", "name": "stress-test-config-update", "url": "https://stress-test-config-update.vercel.app/", "description": "stress-config-update", "category": "Testing", "icon": "circuit-board" },
-            { "id": "testnet_storeman_checker", "name": "testnet_storeman_tx_checker", "url": "http://44.233.241.210:9090/", "description": "testnet_storeman_tx_checker", "category": "Debug", "icon": "shield-x" },
-            { "id": "txdebug", "name": "blocksec_tx_debug", "url": "https://blocksec.com/phalcon/explorer", "description": "blocksec_tx_debug", "category": "Debug", "icon": "shield-x" },
-            { "id": "txdebug", "name": "tenderly.co", "url": "https://tenderly.co/", "description": "tenderly.co/", "category": "Debug", "icon": "shield-x" },
-            { "id": "evm_bridge_task_manager", "name": "evm_bridge_task_manager", "url": "https://bridge-evm-engine-front.vercel.app/", "description": "evm_bridge_task_manager", "category": "Testing", "icon": "shield-x" },
-            { "id": "wan-project", "name": "wan-project", "url": "https://github.com/orgs/wan-project/projects", "description": "wan-project", "category": "Development", "icon": "shield-x" },
-            { "id": "wanbridge-testnet-dashboard", "name": "wanbridge-testnet-dashboard", "url": "https://wanbridge-testnet-dashboard.vercel.app/", "description": "BridgeTx Check", "category": "Debug", "icon": "shield-x" },
-            { "id": "wanbridge-dashboard", "name": "wanbridge-dashboard", "url": "https://wanbridge-dashboard.vercel.app/", "description": "BridgeTx Check", "category": "Debug", "icon": "shield-x" },
-            { "id": "solana-tool", "name": "solana-tool", "url": "https://solana-tool-six.vercel.app/", "description": "BridgeTx Check", "category": "Debug", "icon": "shield-x" },
-            { "id": "EVM-API-Provider", "name": "moralis", "url": "https://admin.moralis.com/data-api", "description": "API-Provider", "category": "Debug", "icon": "shield-x" },
-            { "id": "EVM-API-Provider", "name": "etherscan", "url": "https://etherscan.io/", "description": "API-Provider", "category": "Debug", "icon": "shield-x" },
-            { "id": "EVM-API-Provider", "name": "blockscout", "url": "https://www.blockscout.com/", "description": "API-Provider", "category": "Debug", "icon": "shield-x" },
-            { "id": "Cardano-API-Provider", "name": "blockfrost", "url": "https://blockfrost.io/auth/signin", "description": "API-Provider", "category": "Debug", "icon": "shield-x" },
-            { "id": "Logs", "name": "210", "url": "https://log.wanscan.org/app/kibana", "description": "logs", "category": "Debug", "icon": "shield-x" },
-            { "id": "bridge", "name": "bridge_with_tokenpair", "url": "https://bridge-testnet.wanchain.org/AssetBridge?asset=USDT&from=Arbitrum&to=Wanchain", "description": "logs", "category": "Debug", "icon": "shield-x" },
-            { "id": "bridge", "name": "xport", "url": "https://xport-token-bridge-register.vercel.app/", "description": "msg_cross", "category": "bridge", "icon": "shield-x" }
+    // --- Development & Infrastructure ---
+    { "id": "ICON", "name": "Lucide Icons", "url": "https://lucide.dev/", "description": "Search open-source vector icons for UI development", "category": "Development", "icon": "folder-root" },
+    { "id": "gas_zip", "name": "GAS Center", "url": "https://www.gas.zip/", "description": "Instant gas refueling and distribution across multiple chains", "category": "Development", "icon": "car-taxi-front" },
+    { "id": "ione-web", "name": "iONE Web", "url": "https://ione-web.vercel.app/", "description": "Access and interact with Wanchain iWAN developer services", "category": "Development", "icon": "zap" },
+    { "id": "evm-nexus", "name": "EVM Nexus", "url": "https://evm-nexus.vercel.app/", "description": "Decode smart contract ABIs and explore on-chain data", "category": "Development", "icon": "code-2" },
+    { "id": "wan-project", "name": "WanProject GitHub", "url": "https://github.com/orgs/wan-project/projects", "description": "Manage Wanchain organization projects and development boards", "category": "Development", "icon": "shield-x" },
+    { "id": "chain-request", "name": "Chain Request", "url": "https://chain-request.vercel.app/", "description": "High-performance RPC proxy and request aggregator", "category": "Infrastructure", "icon": "layers" },
 
-            
+    // --- Asset Management ---
+    { "id": "wanbank", "name": "WanBank", "url": "https://wanbank.vercel.app/", "description": "Wanchain ecosystem asset management and dashboard", "category": "Asset Management", "icon": "layout-dashboard" },
+    { "id": "asset-tracker", "name": "Asset Tracker", "url": "https://asset-center-golden.vercel.app/", "description": "Real-time multi-chain asset analysis and monitoring", "category": "Asset Management", "icon": "search" },
+    { "id": "multichain-sender", "name": "Multichain Sender", "url": "https://multichain-sender.vercel.app/", "description": "Batch token and asset distribution tool for multi-chain", "category": "Asset Management", "icon": "send" },
 
+    // --- Bridge & Cross-Chain ---
+    { "id": "Bridge_Time_Check", "name": "Bridge Time Checker", "url": "https://bridge-time-cost.vercel.app/", "description": "Analyze statistical costs and transfer times for cross-chain bridges", "category": "Bridge", "icon": "align-horizontal-distribute-center" },
+    { "id": "xport", "name": "XPort Token Bridge", "url": "https://xport-token-bridge-register.vercel.app/", "description": "Register and manage cross-chain token pairs for messaging bridges", "category": "Bridge", "icon": "shield-x" },
+    { "id": "bridge-testnet", "name": "Wanchain Testnet Bridge", "url": "https://bridge-testnet.wanchain.org/AssetBridge?asset=USDT&from=Arbitrum&to=Wanchain", "description": "Test cross-chain asset transfers between Arbitrum and Wanchain", "category": "Bridge", "icon": "shield-x" },
 
+    // --- Testing & QA ---
+    { "id": "case-generator", "name": "Case Generator", "url": "https://bridge-case-generator.vercel.app/", "description": "Automatically generate test cases for cross-chain bridges", "category": "Testing", "icon": "beaker" },
+    { "id": "stress-tx-config-update", "name": "Stress Test Config", "url": "https://stress-test-config-update.vercel.app/", "description": "Update and manage configurations for transaction stress testing", "category": "Testing", "icon": "circuit-board" },
+    { "id": "evm_bridge_task_manager", "name": "EVM Bridge Task Manager", "url": "https://bridge-evm-engine-front.vercel.app/", "description": "Monitor and manage automated EVM bridge execution tasks", "category": "Testing", "icon": "shield-x" },
 
+    // --- Debug & Monitoring ---
+    { "id": "circlecctp", "name": "CCTP Center", "url": "https://circlecctp.vercel.app/", "description": "Testing tools and utilities for Circle's Cross-Chain Transfer Protocol", "category": "Debug", "icon": "shield-check" },
+    { "id": "testnet_storeman_checker", "name": "Storeman Tx Checker", "url": "http://44.233.241.210:9090/", "description": "Monitor and debug Wanchain testnet Storeman node transactions", "category": "Debug", "icon": "shield-x" },
+    { "id": "blocksec_tx_debug", "name": "BlockSec Phalcon", "url": "https://blocksec.com/phalcon/explorer", "description": "Advanced transaction debugger and security analysis explorer", "category": "Debug", "icon": "shield-x" },
+    { "id": "tenderly_debug", "name": "Tenderly", "url": "https://tenderly.co/", "description": "Smart contract monitoring, debugging, and simulation platform", "category": "Debug", "icon": "shield-x" },
+    { "id": "wanbridge-testnet-dashboard", "name": "WanBridge Testnet Dashboard", "url": "https://wanbridge-testnet-dashboard.vercel.app/", "description": "Track and verify testnet bridge transactions and statuses", "category": "Debug", "icon": "shield-x" },
+    { "id": "wanbridge-dashboard", "name": "WanBridge Mainnet Dashboard", "url": "https://wanbridge-dashboard.vercel.app/", "description": "Track and verify mainnet bridge transactions and statuses", "category": "Debug", "icon": "shield-x" },
+    { "id": "solana-tool", "name": "Solana Tool", "url": "https://solana-tool-six.vercel.app/", "description": "Debug and verify Solana-related cross-chain bridge transactions", "category": "Debug", "icon": "shield-x" },
+    { "id": "logs_210", "name": "210 Kibana Logs", "url": "https://log.wanscan.org/app/kibana", "description": "Access system log aggregation and real-time monitoring via Kibana", "category": "Debug", "icon": "shield-x" },
 
-        ];
+    // --- API Providers & Explorers ---
+    { "id": "moralis-api", "name": "Moralis API", "url": "https://admin.moralis.com/data-api", "description": "Comprehensive EVM data API provider and developer hub", "category": "API Providers", "icon": "shield-x" },
+    { "id": "etherscan", "name": "Etherscan", "url": "https://etherscan.io/", "description": "Leading Ethereum blockchain explorer and API provider", "category": "API Providers", "icon": "shield-x" },
+    { "id": "blockscout", "name": "Blockscout", "url": "https://www.blockscout.com/", "description": "Open-source blockchain explorer and multi-chain data provider", "category": "API Providers", "icon": "shield-x" },
+    { "id": "blockfrost", "name": "Blockfrost", "url": "https://blockfrost.io/auth/signin", "description": "Instant and reliable Cardano API provider for developers", "category": "API Providers", "icon": "shield-x" }
+];          
 
         // --- Navigation Page Logic ---
         function renderTools(filter = 'All') {
