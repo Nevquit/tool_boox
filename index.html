@@ -187,13 +187,14 @@
     </div>
 
     <script>
-        const toolsData = [
+ const toolsData = [
     // --- Development & Infrastructure ---
     { "id": "ICON", "name": "Lucide Icons", "url": "https://lucide.dev/", "description": "Search open-source vector icons for UI development", "category": "Development", "icon": "folder-root" },
     { "id": "gas_zip", "name": "GAS Center", "url": "https://www.gas.zip/", "description": "Instant gas refueling and distribution across multiple chains", "category": "Development", "icon": "car-taxi-front" },
     { "id": "ione-web", "name": "iONE Web", "url": "https://ione-web.vercel.app/", "description": "Access and interact with Wanchain iWAN developer services", "category": "Development", "icon": "zap" },
     { "id": "evm-nexus", "name": "EVM Nexus", "url": "https://evm-nexus.vercel.app/", "description": "Decode smart contract ABIs and explore on-chain data", "category": "Development", "icon": "code-2" },
     { "id": "wan-project", "name": "WanProject GitHub", "url": "https://github.com/orgs/wan-project/projects", "description": "Manage Wanchain organization projects and development boards", "category": "Development", "icon": "shield-x" },
+    { "id": "message_bridge_contracts", "name": "Message Bridge Contracts", "url": "https://github.com/wanchain/message-bridge-contracts/blob/main/README.md", "description": "Wanchain cross-chain message bridge smart contracts and documentation", "category": "Development", "icon": "shield-x" },
     { "id": "chain-request", "name": "Chain Request", "url": "https://chain-request.vercel.app/", "description": "High-performance RPC proxy and request aggregator", "category": "Infrastructure", "icon": "layers" },
 
     // --- Asset Management ---
@@ -226,7 +227,7 @@
     { "id": "etherscan", "name": "Etherscan", "url": "https://etherscan.io/", "description": "Leading Ethereum blockchain explorer and API provider", "category": "API Providers", "icon": "shield-x" },
     { "id": "blockscout", "name": "Blockscout", "url": "https://www.blockscout.com/", "description": "Open-source blockchain explorer and multi-chain data provider", "category": "API Providers", "icon": "shield-x" },
     { "id": "blockfrost", "name": "Blockfrost", "url": "https://blockfrost.io/auth/signin", "description": "Instant and reliable Cardano API provider for developers", "category": "API Providers", "icon": "shield-x" }
-];          
+];   
 
         // --- Navigation Page Logic ---
         function renderTools(filter = 'All') {
